@@ -105,9 +105,6 @@ showUsage(const char* cmd) {
                " -b INTEGER  The number of MIDI ticks in a single bar\n"
                "             E.g. 1920 for 480 bpqn with 4/4 time tune\n"
                "             Default: 1920\n"
-               " -g          Map the note number into note name with GM specification\n"
-               "             If this option is given, note 60 is mapped to C3\n"
-               "             Otherwise (by default), note 60 is mapped to C4 - the Middle C\n"
                " -f          Force creation of the Final Print even if Validation found the issues\n"
                " -h          This help text\n";
 }
@@ -126,7 +123,6 @@ int main(int argc, const char* argv[])
   int text2_offset;
   int bar_len;
   int timing_strech_ratio;
-  bool gm_note_num = false;
   bool force_output = false;
 
   input_file          = getStrOption("-i", argv, argv + argc);
@@ -140,7 +136,6 @@ int main(int argc, const char* argv[])
   text2_offset        = getIntOption("-q", argv, argv + argc, 30);
   bar_len             = getIntOption("-b", argv, argv + argc, 480 * 4);
   timing_strech_ratio = getIntOption("-t", argv, argv + argc, 100);
-  gm_note_num         = findOption("-g", argv, argv + argc);
   force_output        = findOption("-f", argv, argv + argc);
   
 
@@ -173,9 +168,6 @@ int main(int argc, const char* argv[])
   }
 
   TMusicBox music_box = TMusicBox30();
-  if (gm_note_num) {
-    key_offset += 12;
-  }
 
   std::map<int, std::set<int> > sequence;
 
