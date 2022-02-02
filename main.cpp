@@ -93,6 +93,8 @@ showUsage(const char* cmd) {
                " -s FILE     Output Sequence CSV file\n"
                " -v FILE     Output Validation result PDF file\n"
                " -o FILE     Output Final Print PDF file\n"
+               " -d PATH     Output directory\n"
+               "             Default: current directory\n"
                " -k INTEGER  Key offset to shift note number (e.g. '-k -24' for 2 octave down)\n"
                " -t INTEGER  Timing stretch ratio (e.g. '-t 200' to convert 1/8 note into 1/4 note)\n"
                "             Default: 100 (%)\n"
@@ -116,6 +118,7 @@ int main(int argc, const char* argv[])
   std::string sequence_out_file;
   std::string validation_pdf_file;
   std::string output_pdf_file;
+  std::string output_directory;
   int key_offset;
   std::string text1;
   std::string text2;
@@ -129,6 +132,7 @@ int main(int argc, const char* argv[])
   sequence_out_file   = getStrOption("-s", argv, argv + argc);
   validation_pdf_file = getStrOption("-v", argv, argv + argc);
   output_pdf_file     = getStrOption("-o", argv, argv + argc);
+  output_directory    = getStrOption("-d", argv, argv + argc);
   key_offset          = getIntOption("-k", argv, argv + argc, 0);
   text1               = getStrOption("-m", argv, argv + argc);
   text2               = getStrOption("-n", argv, argv + argc);
@@ -149,7 +153,7 @@ int main(int argc, const char* argv[])
     timing_strech_ratio = 1;
   }
 
-  std::string filename(input_file);
+  std::string filename = std::filesystem::path(input_file).filename();
   if (filename.find_last_of(".") != std::string::npos) {
     if (filename.substr(filename.find_last_of(".")) == ".csv") {
       mode = ECsvSeq;
@@ -165,6 +169,11 @@ int main(int argc, const char* argv[])
   }  
   if (output_pdf_file.empty()) {
     output_pdf_file = filename + "_final.pdf";
+  }
+  if (!output_directory.empty()) {
+    sequence_out_file = output_directory + "/" + sequence_out_file;
+    validation_pdf_file = output_directory + "/" + validation_pdf_file;
+    output_pdf_file = output_directory + "/" + output_pdf_file;
   }
 
   TMusicBox music_box = TMusicBox30();
