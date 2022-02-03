@@ -131,6 +131,83 @@ void TDraft::init()
                         "Q\n"
                      << std::endl;
 
+      m_graph_stream << "% explaining texts\n"
+                     << "BT q "
+                        "/F1 8 Tf "
+                     << convertMMToPoint(20) << " "
+                     << convertMMToPoint(44) << " Td "
+                     << "(A red note indicate it is the key which is not supported by the music box.) Tj "
+                     << "Q ET \n"
+
+                     << "BT q "
+                        "/F1 8 Tf "
+                     << convertMMToPoint(20) << " "
+                     << convertMMToPoint(40) << " Td "
+                     << "(An amber note indicate it doesn't have enough preceding space after the previous note at the same key.) Tj "
+                     << "Q ET \n"
+                     << std::endl;
+
+      double cx = 17;
+      double cy = 44.8;
+      m_graph_stream << "q 0.1 w 0 J 0 j "
+                     << "1 0 0 RG 1 0 0 rg "
+
+                     // start
+                     << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " m "
+
+                     // 1st arc 0-3 o'clock
+                     << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                     << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                     << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                     // 2nd arc 3-6 o'clock
+                     << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                     << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                     << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy - 1.0)) << " c "
+
+                     // 3rd arc 6-9 o'clock
+                     << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                     << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                     << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                     // 4th arc 9-12 o'clock
+                     << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                     << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                     << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " c "
+
+                     // closing
+                     << "b Q" << std::endl;
+
+      cy = 40.8;
+      m_graph_stream << "q 0.1 w 0 J 0 j "
+                     << "0.8 0.5 0 RG 1 0.8 0 rg "
+
+                     // start
+                     << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " m "
+
+                     // 1st arc 0-3 o'clock
+                     << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                     << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                     << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                     // 2nd arc 3-6 o'clock
+                     << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                     << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                     << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy - 1.0)) << " c "
+
+                     // 3rd arc 6-9 o'clock
+                     << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                     << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                     << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                     // 4th arc 9-12 o'clock
+                     << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                     << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                     << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " c "
+
+                     // closing
+                     << "b Q" << std::endl;
+
 }
 
 void TDraft::Finalize()
