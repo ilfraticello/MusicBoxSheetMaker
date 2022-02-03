@@ -297,11 +297,33 @@ TFinalPrint::addNote(int time, int key)
 
   m_graph_stream << "% time[" << time << "] " << TUtil::KeyName(key) << std::endl;
 
-  // a circle (by zero-size rect with round edge line) for a note
-  m_graph_stream << lw << " w 1 J 1 j "
-                 << "0 0 0 RG "
-                 << convertMMToPoint(cx) << " " << convertMMToPoint(cy) << " 0 0 re S"
-                 << std::endl;
+  // a circle (4 quarter arcs)
+  m_graph_stream << "q 0.1 w 0 J 0 j "
+                 << "0 0 0 RG 0.5 g "
+                 // start
+                 << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " m "
+
+                 // 1st arc 0-3 o'clock
+                 << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                 << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                 << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                 // 2nd arc 3-6 o'clock
+                 << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                 << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                 << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy - 1.0)) << " c "
+
+                 // 3rd arc 6-9 o'clock
+                 << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                 << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                 << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                 // 4th arc 9-12 o'clock
+                 << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                 << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                 << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " c "
+
+                 << "b Q" << std::endl;
 
   m_graph_stream << std::endl;
 

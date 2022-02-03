@@ -68,7 +68,8 @@ void TDraft::init()
   m_graph_stream << std::endl;
 
   // clefs
-      m_graph_stream << "q 1 0 0 1 34.0533 260.9706 cm\n"
+      m_graph_stream << "% drawing crefs\n"
+                        "q 1 0 0 1 34.0533 260.9706 cm\n"
                         "0 0 m\n"
                         "1.8 1.414 3.583 2.951 4.678 5 c\n"
                         "6.216 7.749 6.788 11.314 5.264 14.175 c\n"
@@ -229,11 +230,37 @@ void TDraft::AddNote(int time, int key, int warning)
 
   m_graph_stream << "% time[" << time << "] " << TUtil::KeyName(key) << std::endl;
 
-  // a circle (by zero-size rect with round edge line) for a note
-  m_graph_stream << lw << " w 1 J 1 j "
-                 << (!warning ? "0 0 0 RG " : (warning == 1 ? "0.8 0.5 0 RG " : "1 0 0 RG "))
-                 << convertMMToPoint(cx) << " " << convertMMToPoint(cy) << " 0 0 re S"
-                 << std::endl;
+  m_graph_stream << "q ";
+
+  // a circle (4 quarter arcs)
+  m_graph_stream << "0.1 w 0 J 0 j "
+                 << (!warning ? "0 0 0 RG 0.5 0.5 0.5 rg " :
+                        (warning == 1 ? "0.8 0.5 0 RG 1 0.8 0 rg " : "1 0 0 RG 1 0 0 rg "))
+                 // start
+                 << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " m "
+
+                 // 1st arc 0-3 o'clock
+                 << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                 << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                 << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                 // 2nd arc 3-6 o'clock
+                 << (convertMMToPoint(cx + 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                 << (convertMMToPoint(cx + 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                 << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy - 1.0)) << " c "
+
+                 // 3rd arc 6-9 o'clock
+                 << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy - 1.0)) << " "
+                 << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy - 0.552)) << " "
+                 << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy)) << " c "
+
+                 // 4th arc 9-12 o'clock
+                 << (convertMMToPoint(cx - 1.0)) << " " << (convertMMToPoint(cy + 0.552)) << " "
+                 << (convertMMToPoint(cx - 0.552)) << " " << (convertMMToPoint(cy + 1.0)) << " "
+                 << (convertMMToPoint(cx)) << " " << (convertMMToPoint(cy + 1.0)) << " c "
+
+                 // closing
+                 << "b" << std::endl;
 
   if (sharp) {
     // draw 4 lines for a sharp (#)
@@ -259,6 +286,7 @@ void TDraft::AddNote(int time, int key, int warning)
                    << convertMMToPoint(cy + 0.8) << " l S"
                    << std::endl;
   }
+  m_graph_stream << "Q" << std::endl;
 
   m_graph_stream << std::endl;
 }

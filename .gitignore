@@ -34,5 +34,8 @@
 # Mac
 **/.DS_Store
 
+# Editor
+*.swp
+
 # Directories
 build/
