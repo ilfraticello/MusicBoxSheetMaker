@@ -1,0 +1,1 @@
+$ ./MusicBoxSheetMaker -i ../samples/Canon.mid -d out -r 420 -m "CANON" -n "Johann Pachelbel" -q 25

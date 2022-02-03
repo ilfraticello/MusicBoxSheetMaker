@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <libgen.h>
+#include <assert.h>
 
 static std::string note_name(int note)
 {
@@ -98,6 +99,9 @@ showUsage(const char* cmd) {
                " -k INTEGER  Key offset to shift note number (e.g. '-k -24' for 2 octave down)\n"
                " -t INTEGER  Timing stretch ratio (e.g. '-t 200' to convert 1/8 note into 1/4 note)\n"
                "             Default: 100 (%)\n"
+               " -r INTEGER  Minimum distance between the same note timings, for validation\n"
+               "             The distance less than 480 clocks can cause unexpected result\n"
+               "             Default: 480\n"
                " -m TEXT     Text to be printed on Final Print (1st line)\n"
                " -n TEXT     Text to be printed on Final Print (2nd line)\n"
                " -p INTEGER  Offset of print location of the text specified by '-m' (1st line)\n"
@@ -126,6 +130,7 @@ int main(int argc, const char* argv[])
   int text2_offset;
   int bar_len;
   int timing_strech_ratio;
+  int minimum_distance;
   bool force_output = false;
 
   input_file          = getStrOption("-i", argv, argv + argc);
@@ -140,6 +145,7 @@ int main(int argc, const char* argv[])
   text2_offset        = getIntOption("-q", argv, argv + argc, 30);
   bar_len             = getIntOption("-b", argv, argv + argc, 480 * 4);
   timing_strech_ratio = getIntOption("-t", argv, argv + argc, 100);
+  minimum_distance    = getIntOption("-r", argv, argv + argc, 480);
   force_output        = findOption("-f", argv, argv + argc);
   
 
@@ -171,6 +177,10 @@ int main(int argc, const char* argv[])
     output_pdf_file = filename + "_final.pdf";
   }
   if (!output_directory.empty()) {
+    if (!std::filesystem::exists(output_directory)) {
+      std::filesystem::create_directory(output_directory);
+    }
+    assert(std::filesystem::exists(output_directory));
     sequence_out_file = output_directory + "/" + sequence_out_file;
     validation_pdf_file = output_directory + "/" + validation_pdf_file;
     output_pdf_file = output_directory + "/" + output_pdf_file;
@@ -208,12 +218,12 @@ int main(int argc, const char* argv[])
 
   TValidator validator(music_box);
 
-  bool valid = validator.Validate(sequence, bar_len, validation_pdf_file.c_str());
+  bool valid = validator.Validate(sequence, bar_len, minimum_distance, validation_pdf_file.c_str());
   std::cerr << "The data is " << (valid ?  "valid" : "invalid")
             << " as an input for " << music_box.NumKeys()
             << " notes music box." << std::endl;
 
-  validator.ShowHistogram(sequence, 30);
+  validator.ShowHistogram(sequence);
   if (!valid && !force_output) {
     std::cout << "Final print PDF is not created. "
               << "Check the above analysis and the Validation PDF file : "

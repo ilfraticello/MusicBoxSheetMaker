@@ -13,8 +13,9 @@ public:
 
   bool Validate(std::map<int, std::set<int> >& sequence,
                 int bar_len,
+                int minimum_distance,
                 const char* outfile = NULL);
-  bool ShowHistogram(std::map<int, std::set<int> >& sequence, int notes);
+  bool ShowHistogram(std::map<int, std::set<int> >& sequence);
 
 private:
   TMusicBox& m_music_box;

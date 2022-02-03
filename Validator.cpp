@@ -15,6 +15,7 @@ TValidator::TValidator(TMusicBox& music_box)
 bool
 TValidator::Validate(std::map<int, std::set<int> >& sequence,
                              int bar_len,
+                             int minimum_distance,
                              const char* outfile)
 {
   std::map<int, int> last_timestamp_per_note;
@@ -40,7 +41,7 @@ TValidator::Validate(std::map<int, std::set<int> >& sequence,
       }
       else {
         if (last_timestamp_per_note.find(note) != last_timestamp_per_note.end() &&
-            t - last_timestamp_per_note[note] < 480) {
+            t - last_timestamp_per_note[note] < minimum_distance) {
           valid = false;
           draft.AddNote(t, note, 1);
         }
@@ -63,9 +64,11 @@ TValidator::Validate(std::map<int, std::set<int> >& sequence,
   return valid;
 }
 
-bool TValidator::ShowHistogram(std::map<int, std::set<int> >& sequence, int notes)
+bool TValidator::ShowHistogram(std::map<int, std::set<int> >& sequence)
 {
-  if (notes != 30) {
+  if (m_music_box.NumKeys() != 30) {
+    // TODO assert or throw
+    // not supported
     return false;
   }
 
