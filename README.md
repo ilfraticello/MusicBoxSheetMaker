@@ -11,18 +11,18 @@ The program would
 Finally you need to make the holes by yourself, and this is what the program cannot assist.
 
 
-# DEMO
+# Quick DEMO
 
-Assume we have a sample MIDI file, as an input.
+There is a sample MIDI file `samples/Canon.midi`. Let's made a PDF file from this MIDI file.
 
 ```
-% ./MusicBoxSheetMaker -i ../samples/sample_song.mid
+$ ./MusicBoxSheetMaker -i ../samples/Canon.midi -d out -r 420 -m "CANON" -n "Johann Pachelbel" -q 25
 ```
 
-The above command would create the following files in ../samples/
- - `sample_song.csv`
- - `sample_song_validation.pdf`
- - `sample_song_final.pdf`
+The above command would create the following files in `out` directory under the current working directory (if not existing, it will be created)
+ - `Canon.csv.csv`
+ - `Canon_validation.pdf`
+ - `Canon_final.pdf`
 
 
 # Hot to build
