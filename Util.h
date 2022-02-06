@@ -10,7 +10,8 @@ namespace TUtil {
 
   void ExportSequence(std::map<int, std::set<int> >& sequence,
                       const char* filename,
-                      int bar_len = 480 * 4);
+                      int bar_len,
+                      int timing_stretch);
 
   std::map<int, std::set<int> >
       ImportSequence(const char* filename);

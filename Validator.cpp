@@ -15,6 +15,7 @@ TValidator::TValidator(TMusicBox& music_box)
 bool
 TValidator::Validate(std::map<int, std::set<int> >& sequence,
                              int bar_len,
+                             int timing_stretch,
                              int minimum_distance,
                              const char* outfile)
 {
@@ -26,7 +27,7 @@ TValidator::Validate(std::map<int, std::set<int> >& sequence,
     return false;
   }
 
-  TDraft draft(m_music_box, sequence.begin()->first, sequence.rbegin()->first, bar_len);
+  TDraft draft(m_music_box, sequence.begin()->first, sequence.rbegin()->first, bar_len, timing_stretch);
 
   bool valid = true;
   std::map<int, std::set<int> >::iterator it1;

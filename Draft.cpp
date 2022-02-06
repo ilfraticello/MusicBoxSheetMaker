@@ -5,9 +5,11 @@
 TDraft::TDraft(TMusicBox& music_box,
                int min_time,
                int max_time,
-               int bar_len)
+               int bar_len,
+               int timing_strech)
   : m_finalized(false), m_music_box(music_box),
     m_min_time(min_time), m_max_time(max_time), m_bar_len(bar_len),
+    m_timing_strech(timing_strech),
     m_clock_width(max_time - min_time + 1),
     m_offset_mm(20 - convertClockToMM(min_time))
 {
@@ -41,7 +43,8 @@ void TDraft::init()
   m_graph_stream << std::endl;
 
   // bars
-  for (int t = 0; t <= m_max_time; t += m_bar_len) {
+  double adjusted_bar_len = (double)m_timing_strech / 100.0 * m_bar_len;
+  for (int t = 0; t <= m_max_time; t += adjusted_bar_len) {
     if (t < m_min_time) {
       continue;
     }
@@ -54,7 +57,7 @@ void TDraft::init()
 
     // add bar number
     if (t > m_min_time) {
-      int bar_num = t / m_bar_len;
+      int bar_num = t / adjusted_bar_len;
       int adj = (bar_num > 9) ? 1 : 0;
       m_graph_stream << "BT "
                         "/F1 6 Tf "

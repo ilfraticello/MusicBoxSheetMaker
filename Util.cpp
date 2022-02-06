@@ -20,9 +20,9 @@ TUtil::KeyName(int key)
 }
 
 void
-TUtil::ExportSequence(std::map<int, std::set<int> >& sequence, const char* filename, int bar_len)
+TUtil::ExportSequence(std::map<int, std::set<int> >& sequence, const char* filename, int bar_len, int timing_stretch)
 {
-  int nextBar = bar_len;
+  double nextBar = bar_len * timing_stretch / 100;;
 
   std::ofstream ofs(filename);
 
@@ -42,7 +42,7 @@ TUtil::ExportSequence(std::map<int, std::set<int> >& sequence, const char* filen
 
     if (t >= nextBar) {
       ofs << "# " << ++barCounter << std::endl;
-      nextBar += bar_len;
+      nextBar += bar_len * timing_stretch / 100;
     }
 
     // reverse iterator, for readability of exported file

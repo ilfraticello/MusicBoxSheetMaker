@@ -19,7 +19,8 @@ public:
               const char* text2,
               double text1_offset_mm,
               double text2_offset_mm,
-              int bar_len = 480 * 4);
+              int bar_len,
+              int timing_stretch);
   virtual ~TFinalPrint();
 
   const std::string GetDoc() const { return m_doc.str(); }
@@ -43,6 +44,7 @@ private:
   std::map<int, std::set<int> >& m_sequence;
   TMusicBox& m_music_box;
   int m_bar_len;
+  int m_timing_stretch;
   int m_finalized;
   int m_first_clock;
   int m_last_clock;

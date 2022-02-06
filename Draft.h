@@ -14,7 +14,8 @@ public:
   TDraft(TMusicBox& music_box,
          int min_time,
          int max_time,
-         int bar_len);
+         int bar_len,
+         int timing_strech);
   virtual ~TDraft();
 
   void AddNote(int time, int key, int warning);
@@ -36,6 +37,7 @@ private:
   int m_min_time;
   int m_max_time;
   int m_bar_len;
+  int m_timing_strech;
   int m_clock_width;
   int m_offset_mm;
   std::stringstream m_graph_stream;

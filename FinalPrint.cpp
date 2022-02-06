@@ -9,10 +9,12 @@ TFinalPrint::TFinalPrint(std::map<int, std::set<int> >& sequence,
                          const char* text2,
                          double text1_offset_mm,
                          double text2_offset_mm,
-                         int bar_len)
+                         int bar_len,
+                         int timing_stretch)
   : m_sequence(sequence),
     m_music_box(music_box),
     m_bar_len(bar_len),
+    m_timing_stretch(timing_stretch),
     m_finalized(false), 
     m_first_clock(0),
     m_last_clock(0),
@@ -164,34 +166,41 @@ TFinalPrint::init()
   m_graph_stream << std::endl;
 
   // vertical lines
-  for (int t = 0; t <= m_last_clock; t += 480) {
-    if (t < m_first_clock) {
-      continue;
-    }
-    double x = t / 60.0
-             + m_paper_margin_mm + m_box_horizontal_margin_mm + m_offset_mm;
-    double low_y = m_paper_margin_mm + m_box_virtical_margin_mm;
-    double high_y = m_paper_height_mm - m_paper_margin_mm - m_box_virtical_margin_mm;
-    if (t % m_bar_len == 0) {
-      double adj = ((int)t / m_bar_len > 9) ? 1.5 : 0;
-      m_graph_stream << "0.3 w 0 0 0 RG ";   // lineWidth 0.3, black
+  // TODO 480 should varies per MIDI file
+  int times = (m_bar_len % 480) ? m_bar_len / 240
+                                : m_bar_len / 480;
+  double adjusted_bar_len = (double)m_timing_stretch / 100.0 * m_bar_len;
+  for (int t = 0; t <= m_last_clock; t += adjusted_bar_len) {
+    for (int i = 0; i < times; ++i) {
+      double x = (t + adjusted_bar_len / times * i) / 60.0
+               + m_paper_margin_mm + m_box_horizontal_margin_mm + m_offset_mm;
+      double low_y = m_paper_margin_mm + m_box_virtical_margin_mm;
+      double high_y = m_paper_height_mm - m_paper_margin_mm - m_box_virtical_margin_mm;
+      if (t + adjusted_bar_len / times * i < m_first_clock - 60 ||
+          t + adjusted_bar_len / times * i > m_last_clock + 60) {
+        continue;
+      }
+      if (i == 0) {
+        double adj = ((int)t / adjusted_bar_len > 9) ? 1.5 : 0;
+        m_graph_stream << "0.3 w 0 0 0 RG ";   // lineWidth 0.3, black
 
-      m_text_stream << "BT "
-                       "/F1 6 Tf "
-                    << convertMMToPoint(x - 2 - adj) << " "
-                    << convertMMToPoint(high_y + 2) << " Td "
-                    << "(" << ((int)t / m_bar_len) << ") Tj "
-                    << "ET "
-                    << std::endl;
+        m_text_stream << "BT "
+                         "/F1 6 Tf "
+                      << convertMMToPoint(x - 2 - adj) << " "
+                      << convertMMToPoint(high_y + 2) << " Td "
+                      << "(" << ((int)t / adjusted_bar_len) << ") Tj "
+                      << "ET "
+                      << std::endl;
+      }
+      else {
+        m_graph_stream << "0.1 w 0.5 0.5 0.5 RG ";   // lineWidth 0.1, 50% gray
+      }
+      m_graph_stream << convertMMToPoint(x) << " "
+                     << convertMMToPoint(low_y) << " m "
+                     << convertMMToPoint(x) << " "
+                     << convertMMToPoint(high_y) << " l S"
+                     << std::endl;
     }
-    else {
-      m_graph_stream << "0.1 w 0.5 0.5 0.5 RG ";   // lineWidth 0.1, 50% gray
-    }
-    m_graph_stream << convertMMToPoint(x) << " "
-                   << convertMMToPoint(low_y) << " m "
-                   << convertMMToPoint(x) << " "
-                   << convertMMToPoint(high_y) << " l S"
-                   << std::endl;
   }
   m_graph_stream << std::endl;
 }
@@ -199,6 +208,15 @@ TFinalPrint::init()
 void
 TFinalPrint::finalize()
 {
+  m_text_stream << "BT "
+                   "/F1 8 Tf "
+                << convertMMToPoint(m_paper_margin_mm + 1) << " "
+                << convertMMToPoint(m_paper_height_mm - m_paper_margin_mm + 4) << " Td "
+                << "(" << "Paper size : " << m_paper_width_mm
+                << "mm x " << m_paper_height_mm << "mm) Tj "
+                << "ET "
+                << std::endl;
+
   m_text_stream << "BT "
                    "/F1 8 Tf "
                 << convertMMToPoint(m_paper_margin_mm + 1) << " "

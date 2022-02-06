@@ -13,6 +13,7 @@ public:
 
   bool Validate(std::map<int, std::set<int> >& sequence,
                 int bar_len,
+                int timing_stretch,
                 int minimum_distance,
                 const char* outfile = NULL);
   bool ShowHistogram(std::map<int, std::set<int> >& sequence);

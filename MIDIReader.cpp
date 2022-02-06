@@ -52,10 +52,13 @@ TMIDIReader::readTrack(const char* ptr, size_t available)
     uint64_t delta_time = 0;
     consumed = readVarInt(ptr + cur, available - cur, delta_time);
     cur += consumed;
-    delta_time = (double)delta_time * (m_timing_strech_ratio / 100.0);
+//    delta_time = (double)delta_time * (m_timing_strech_ratio / 100.0);
     abs_time += delta_time;
 
     assert(cur + 3 <= available);
+
+    uint64_t stretched_abs_time
+        = (double) abs_time * (m_timing_strech_ratio / 100.0);
 
     unsigned char chunk_type = ptr[cur++];
     assert((chunk_type & 0x80) == 0x80);
@@ -64,14 +67,15 @@ TMIDIReader::readTrack(const char* ptr, size_t available)
       unsigned char key = ptr[cur++];
       unsigned char velocity = ptr[cur++];
       int key_adj = (int)key + m_offset;
-      if (m_sequence.find(abs_time) == m_sequence.end()) {
+      if (m_sequence.find(stretched_abs_time) == m_sequence.end()) {
         std::set<int> s;
         s.insert(key_adj);
-        m_sequence.insert(std::make_pair(abs_time, s));
+        m_sequence.insert(std::make_pair(stretched_abs_time, s));
       }
       // avoid duplicate
-      else if (m_sequence[abs_time].find(key_adj) == m_sequence[abs_time].end()) {
-        m_sequence[abs_time].insert(key_adj);
+      else if (m_sequence[stretched_abs_time].find(key_adj)
+               == m_sequence[stretched_abs_time].end()) {
+        m_sequence[stretched_abs_time].insert(key_adj);
       }
     }
     else

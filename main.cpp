@@ -185,6 +185,9 @@ int main(int argc, const char* argv[])
     validation_pdf_file = output_directory + "/" + validation_pdf_file;
     output_pdf_file = output_directory + "/" + output_pdf_file;
   }
+  std::cout << "sequence_out_file : " << sequence_out_file << std::endl;
+  std::cout << "validation_pdf_file : " << validation_pdf_file << std::endl;
+  std::cout << "output_pdf_file : " << output_pdf_file << std::endl;
 
   TMusicBox music_box = TMusicBox30();
 
@@ -207,7 +210,8 @@ int main(int argc, const char* argv[])
     TMIDIReader seq(data, size, key_offset, timing_strech_ratio);
     sequence = seq.getSequence();
 
-    TUtil::ExportSequence(sequence, sequence_out_file.c_str(), bar_len);
+    TUtil::ExportSequence(sequence, sequence_out_file.c_str(),
+                          bar_len, timing_strech_ratio);
     std::cout << "Exported the sequence file : "
               << sequence_out_file << std::endl;
   }
@@ -218,14 +222,14 @@ int main(int argc, const char* argv[])
 
   TValidator validator(music_box);
 
-  bool valid = validator.Validate(sequence, bar_len, minimum_distance, validation_pdf_file.c_str());
+  bool valid = validator.Validate(sequence, bar_len, timing_strech_ratio, minimum_distance, validation_pdf_file.c_str());
   std::cerr << "The data is " << (valid ?  "valid" : "invalid")
             << " as an input for " << music_box.NumKeys()
             << " notes music box." << std::endl;
 
   validator.ShowHistogram(sequence);
   if (!valid && !force_output) {
-    std::cout << "Final print PDF is not created. "
+    std::cout << "WARNING: Final print PDF is not created. "
               << "Check the above analysis and the Validation PDF file : "
               << validation_pdf_file
               << std::endl;
@@ -237,7 +241,8 @@ int main(int argc, const char* argv[])
                           music_box,
                           text1.c_str(), text2.c_str(),
                           text1_offset, text2_offset,
-                          bar_len);
+                          bar_len,
+                          timing_strech_ratio);
   final_print.Save(output_pdf_file.c_str());
   std::cout << "Final print PDF is created : "
             << output_pdf_file
